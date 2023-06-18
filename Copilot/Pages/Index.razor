@@ -1,0 +1,17 @@
+﻿@page "/"
+
+<h1>Technomage Copilot !</h1>
+
+<InputTextArea DisplayName="User prompt" @bind-Value="_userPrompt"  />
+
+<br />
+
+<button @onclick="FindSolution">
+    Help me
+</button>
+
+<h2>
+    Solution: 
+</h2>
+
+<p style="white-space: pre-wrap">@_result</p>

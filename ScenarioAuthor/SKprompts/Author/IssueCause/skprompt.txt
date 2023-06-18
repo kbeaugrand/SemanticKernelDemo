@@ -1,0 +1,11 @@
+﻿{{ $Description }}
+
+Sur un site industriel produisant {{ $FactoryKind }}, produisez une liste non ordonnée de 10 problèmes techniques potentiels d'une {{ $MachineName }}.
+
+Suivez les instructions suivantes : 
+- pas de numérotation
+- pas de tirets,
+- un résultat par ligne,
+- nom court uniquement
+
+Résultat : 

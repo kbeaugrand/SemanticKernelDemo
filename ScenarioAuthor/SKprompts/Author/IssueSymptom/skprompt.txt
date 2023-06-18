@@ -1,0 +1,12 @@
+﻿{{ $Description }}
+
+Sur un site industriel produisant {{ $FactoryKind }}, nous avons une machine "{{ $MachineName }}".
+Produisez une liste non ordonnée de 20 symptômes causés par le problème "{{ $IssueCause }}".
+
+Suivez les instructions suivantes : 
+- pas de numérotation
+- pas de tirets,
+- un résultat par ligne,
+- nom court uniquement
+
+Résultat : 

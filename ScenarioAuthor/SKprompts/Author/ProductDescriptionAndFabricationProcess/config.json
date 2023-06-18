@@ -1,0 +1,12 @@
+﻿{
+  "schema": 1,
+  "type": "completion",
+  "description": "a function that generate product description and manufacturing process",
+  "completion": {
+    "max_tokens": 2000,
+    "temperature": 1,
+    "top_p": 0.5,
+    "presence_penalty": 1.0,
+    "frequency_penalty": 1.0
+  }
+}

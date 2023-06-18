@@ -1,0 +1,36 @@
+﻿{
+  "schema": 1,
+  "type": "completion",
+  "description": "a function that generate a ticket for an issue occuring on a production machine",
+  "completion": {
+    "max_tokens": 2000,
+    "temperature": 1,
+    "top_p": 0.5,
+    "presence_penalty": 1.0,
+    "frequency_penalty": 1.0
+  },
+  "input": {
+    "parameters": [
+      {
+        "name": "OperatorName",
+        "description": "The operator name",
+        "defaultValue": ""
+      },
+      {
+        "name": "FactoryKind",
+        "description": "The factory kind",
+        "defaultValue": ""
+      },
+      {
+        "name": "Symptom",
+        "description": "The symptom occuring",
+        "defaultValue": ""
+      },
+      {
+        "name": "Cause",
+        "description": "The cause of the issue",
+        "defaultValue": ""
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+﻿{{ $Description }}
+
+Sur un site industriel produisant {{ $FactoryKind }}, produire une liste de {{ $NumberOfMachines }} types de machines.
+
+Suivez les instructions suivantes : 
+- pas de numérotation
+- pas de tirets,
+- un résultat par ligne,
+- nom court uniquement
+
+Résultat : 

@@ -1,0 +1,81 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
+        <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
+        <!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
+        <OutputType>Exe</OutputType>
+        <RootNamespace>Copilot</RootNamespace>
+        <UseMaui>true</UseMaui>
+        <SingleProject>true</SingleProject>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <EnableDefaultCssItems>false</EnableDefaultCssItems>
+
+        <!-- Display name -->
+        <ApplicationTitle>Copilot</ApplicationTitle>
+
+        <!-- App Identifier -->
+        <ApplicationId>com.companyname.Copilot</ApplicationId>
+        <ApplicationIdGuid>D17C7003-4C8B-460B-8270-A1295A0534DB</ApplicationIdGuid>
+
+        <!-- Versions -->
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <ApplicationVersion>1</ApplicationVersion>
+
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- App Icon -->
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+
+        <!-- Splash Screen -->
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+
+        <!-- Images -->
+        <MauiImage Include="Resources\Images\*" />
+        <MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
+
+        <!-- Custom Fonts -->
+        <MauiFont Include="Resources\Fonts\*" />
+
+        <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="Resources\Raw\SKPrompts\Resolver\config.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Resources\Raw\SKPrompts\Resolver\skprompt.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Azure.Identity" Version="1.9.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+        <PackageReference Include="Microsoft.SemanticKernel" Version="0.15.230609.2-preview" />
+        <PackageReference Include="Microsoft.SemanticKernel.Abstractions" Version="0.15.230609.2-preview" />
+        <PackageReference Include="Microsoft.SemanticKernel.Connectors.Memory.Sqlite" Version="0.15.230609.2-preview" />
+        <PackageReference Include="Microsoft.SemanticKernel.Core" Version="0.15.230609.2-preview" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <MauiAsset Update="Resources\Raw\SKPrompts\Encoder\AnomalyEncode\config.json">
+        <CopyToOutputDirectory></CopyToOutputDirectory>
+      </MauiAsset>
+      <MauiAsset Update="Resources\Raw\SKPrompts\Resolver\HelpMe\config.json">
+        <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+      </MauiAsset>
+      <MauiAsset Update="Resources\Raw\SKPrompts\Resolver\HelpMe\skprompt.txt">
+        <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+      </MauiAsset>
+    </ItemGroup>
+
+</Project>

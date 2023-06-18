@@ -1,0 +1,6 @@
+﻿Dans un monde fantastique, imaginez un type de produit qu'une usine peut fabriquer. 
+Soyez inventif et ne donnez qu'un type de produit.
+
+IMPORTANT: Indique uniquement le nom du produit. Le nom du produit doit etre court et évocateur.
+
+Nom: 

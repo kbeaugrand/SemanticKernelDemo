@@ -1,0 +1,12 @@
+﻿{
+  "schema": 1,
+  "type": "completion",
+  "description": "given a user prompt, search into the database corresponding items and formulate an answer to the user.",
+  "completion": {
+    "max_tokens": 1500,
+    "temperature": 1,
+    "top_p": 0.5,
+    "presence_penalty": 0,
+    "frequency_penalty": 0
+  }
+}

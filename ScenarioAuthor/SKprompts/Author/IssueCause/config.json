@@ -1,0 +1,31 @@
+﻿{
+  "schema": 1,
+  "type": "completion",
+  "description": "a function that generate a list of machine names for a factory",
+  "completion": {
+    "max_tokens": 2000,
+    "temperature": 1,
+    "top_p": 0.5,
+    "presence_penalty": 1.0,
+    "frequency_penalty": 1.0
+  },
+  "input": {
+    "parameters": [
+      {
+        "name": "FactoryKind",
+        "description": "The factory kind",
+        "defaultValue": ""
+      },
+      {
+        "name": "NumberOfIssue",
+        "description": "The number of desired issues",
+        "defaultValue": ""
+      },
+      {
+        "name": "MachineName",
+        "description": "The machine name",
+        "defaultValue": ""
+      }
+    ]
+  }
+}

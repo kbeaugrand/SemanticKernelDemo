@@ -1,0 +1,11 @@
+﻿Leo est opérateur de maintenance dans une usine {{ $FactoryKind }}. 
+Aujourd'hui, il travaille sur une machine {{ $MachineName }}. 
+Il intervient sur une panne de la machine qui indique "{{ $Symptom }}". 
+Au cours de son intervention, il constate la cause "{{ $IssueCause }}". 
+
+Il enregistre les informations qu'il trouve et les actions qu'il entreprend dans son outil d'intervention. 
+
+IMPORTANT : Leo oublie des informations et fait beaucoup de fautes de grammaire et d'orthographe.
+Il utilise également beaucoup d'abréviations.
+
+Voici les informations qu'il écrit sur une seule ligne sans guillemets :
