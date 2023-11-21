@@ -2,6 +2,7 @@
 
 using Azure.Identity;
 using Microsoft.SemanticKernel;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 var azureIdentity = new VisualStudioCredential();
 
@@ -12,33 +13,30 @@ var kernel = Kernel.Builder
             credentials: azureIdentity)
                 .Build();
 
-kernel.ImportSemanticSkillFromDirectory(Path.Combine(Directory.GetCurrentDirectory(), "SKPrompts"), "Author");
+kernel.ImportSemanticFunctionsFromDirectory(Path.Combine(Directory.GetCurrentDirectory(), "SKPrompts"), "Author");
 
 var context = kernel.CreateNewContext();
 
 Console.Write("Factory kind: ");
-var factory = await kernel.Func("Author", "Factory")
-                    .InvokeAsync();
+var factory = await kernel.RunAsync(kernel.Functions.GetFunction("Author", "Factory"));
 
-var factoryKind = factory.Result.Trim();
-context["FactoryKind"] = factoryKind;
+var factoryKind = factory.GetValue<string>()!;
+context.Variables["FactoryKind"] = factoryKind;
 Console.WriteLine(factoryKind);
 
-var description = await kernel.Func("Author", "ProductDescriptionAndFabricationProcess")
-                                .InvokeAsync(context);
+var description = await kernel.RunAsync(kernel.Functions.GetFunction("Author", "ProductDescriptionAndFabricationProcess"), context.Variables);
 
-Console.WriteLine(description.Result);
+Console.WriteLine(description.GetValue<string>());
 
 Console.ReadLine();
 
-context["NumberOfMachines"] = "7";
-context["Description"] = description.Result;
+context.Variables["NumberOfMachines"] = "7";
+context.Variables["Description"] = description.GetValue<string>()!;
 
 Console.Write("Imaginaing machines: ");
-var machines = await kernel.Func("Author", "Machine")
-                    .InvokeAsync(context);
-
-var machineNames = machines.Result.Trim().Split("\n");
+var machines = await kernel.RunAsync(kernel.Functions.GetFunction("Author", "Machine"), context.Variables);
+  
+var machineNames = machines.GetValue<string>()!.Trim().Split("\n");
 Console.WriteLine(string.Join(", ", machineNames));
 
 var potentialIssues = new Dictionary<string, Dictionary<string, List<string>>>();
@@ -49,30 +47,27 @@ foreach (var machineName in machineNames)
 {
     context = kernel.CreateNewContext();
 
-    context["FactoryKind"] = factoryKind;
-    context["MachineName"] = machineName;
+    context.Variables["FactoryKind"] = factoryKind;
+    context.Variables["MachineName"] = machineName;
 
-    var issues = await kernel.Func("Author", "IssueCause")
-                    .InvokeAsync(context);
+    var issues = await kernel.RunAsync(kernel.Functions.GetFunction("Author", "IssueCause"), context.Variables);
 
-    foreach (var issue in issues.Result.Trim().Split("\n"))
+    foreach (var issue in issues.GetValue<string>()!.Trim().Split("\n"))
     {
-        context["IssueCause"] = issue;
-        context["Description"] = description.Result;
+        context.Variables["IssueCause"] = issue;
+        context.Variables["Description"] = description.GetValue<string>()!;
 
-        var symptoms = await kernel.Func("Author", "IssueSymptom")
-                                    .InvokeAsync(context);
+        var symptoms = await kernel.RunAsync(kernel.Functions.GetFunction("Author", "IssueSymptom"), context.Variables);
 
-        foreach (var item in symptoms.Result.Trim().Split("\n"))
+        foreach (var item in symptoms.GetValue<string>()!.Trim().Split("\n"))
         {
-            context["Symptom"] = item;
+            context.Variables["Symptom"] = item;
 
             for (int i = 0; i < 5; i++)
             {
-                var ticket = await kernel.Func("Author", "Ticket")
-                                        .InvokeAsync(context);
+                var ticket = await kernel.RunAsync(kernel.Functions.GetFunction("Author", "Ticket"), context.Variables);
 
-                writer.WriteLine($"{machineName};{ticket.Result.Trim()}");
+                writer.WriteLine($"{machineName};{ticket.GetValue<string>()!.Trim()}");
             }
         }
     }

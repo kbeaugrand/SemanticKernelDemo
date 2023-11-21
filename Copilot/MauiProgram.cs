@@ -1,9 +1,11 @@
-﻿using Azure.Identity;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Maui.LifecycleEvents;
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.Connectors.Memory.Sqlite;
-using Microsoft.SemanticKernel.CoreSkills;
+using Microsoft.SemanticKernel.Connectors.AI.OpenAI;
+using Microsoft.SemanticKernel.Connectors.AI.OpenAI.TextEmbedding;
+using Microsoft.SemanticKernel.Memory;
+using Microsoft.SemanticKernel.Plugins.Memory;
+using SemanticKernel.Connectors.Memory.MongoDB;
 using System.Diagnostics;
 
 namespace Copilot
@@ -28,7 +30,7 @@ namespace Copilot
                         windows
                             .OnLaunched(async (window, args) => {
                                 await CopySKPrompts();
-                                EncodeDatabase();
+                                //EncodeDatabase();
                             });
                     });
 #endif
@@ -40,7 +42,8 @@ namespace Copilot
             builder.Services.AddBlazorWebViewDeveloperTools();
             builder.Logging.AddDebug();
 #endif
-            _ = builder.Services.AddSingleton<IKernel>((_) => CreateKernel().Result);
+            _ = builder.Services.AddSingleton((_) => CreateKernel());
+            _ = builder.Services.AddSingleton((_) => CreateSemantiMemory());
 
             return builder.Build();
         }
@@ -49,6 +52,7 @@ namespace Copilot
         {
             await CopySKSkillToAppData("Encoder", "AnomalyEncode");
             await CopySKSkillToAppData("Resolver", "HelpMe");
+            await CopySKSkillToAppData("Resolver", "GroupHistory");
         }
 
         private static void EncodeDatabase()
@@ -64,14 +68,21 @@ namespace Copilot
                 }
 
                 var lines = await File.ReadAllLinesAsync(dataFilePath);
-                var lineNumber = 0;
 
-                var kernel = await CreateKernel();
-                var encodingFunc = kernel.Func(skillName: "Encoder", functionName: "AnomalyEncode");
+                var kernel = CreateKernel();
 
-                foreach (var line in lines)
+                var memory = CreateSemantiMemory();
+
+                var encodingFunc = kernel.Functions.GetFunction(pluginName: "Encoder", functionName: "AnomalyEncode");
+
+                await Parallel.ForEachAsync(lines, new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = 4
+
+                }, async (line, cancellationToken) =>
                 {
                     string userPrompt = null;
+                    var lineNumber = lines.ToList().IndexOf(line);
 
                     try
                     {
@@ -80,34 +91,47 @@ namespace Copilot
                     catch (Exception)
                     {
                         Debug.WriteLine($"Failed to parse line {lineNumber}");
-                        continue;
+                        return;
                     }
-
-                    lineNumber++;
 
                     var ctx = kernel.CreateNewContext();
 
-                    if ((await ctx.Memory.GetAsync(collection: "maintenance", key: lineNumber.ToString())) != null)
+                    //try
+                    //{
+                    //    if ((await memory.GetAsync(collection: "maintenance", key: lineNumber.ToString()).ConfigureAwait(false)) != null)
+                    //    {
+                    //        return;
+                    //    }
+                    //}
+                    //catch(Exception e)
+                    //{
+                    //    Debug.WriteLine("Failed to check if line was already encoded. Exception: " + e.Message);
+                    //    return;
+                    //}
+
+                    ctx.Variables["INPUT"] = userPrompt;
+
+                    try
                     {
-                        continue;
-                    }
+                        var encoding = await kernel.RunAsync(encodingFunc, ctx.Variables);
 
-                    ctx["INPUT"] = userPrompt;
+                        Debug.WriteLine($"Saving line {lineNumber}...");
 
-                    var encoding = await encodingFunc.InvokeAsync(ctx);
+                        var savedToMemory = $"Equipement: {line.Split(";", StringSplitOptions.TrimEntries)[0]}\n";
+                        savedToMemory += encoding.GetValue<string>();
 
-                    if (encoding.ErrorOccurred)
-                    {
-                        continue;
-                    }
-
-                    Debug.WriteLine($"Saving line {lineNumber}...");
-
-                    await ctx.Memory.SaveInformationAsync(
+                        await memory.SaveInformationAsync(
                             collection: "maintenance",
-                            text: encoding.Result,
-                            id: lineNumber.ToString());
-                }
+                            text: savedToMemory,
+                            id: lineNumber.ToString())
+                                .ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Failed to encode line {lineNumber}, exception: {ex}");
+                        return;
+                    }
+                }).ConfigureAwait(false);
 
                 Debug.WriteLine("All entries encoded");
             });
@@ -143,28 +167,35 @@ namespace Copilot
             }
         }
 
-        private static async Task<IKernel> CreateKernel()
+        private static ISemanticTextMemory CreateSemantiMemory()
         {
-            var azureIdentity = new VisualStudioCredential();
+            var embeddingGenerator = new AzureTextEmbeddingGeneration(
+                       modelId: "text-embedding-ada-002",
+                       endpoint: "https://copichat-yuwt7vgwiz3ug.openai.azure.com/",
+                       apiKey: "");
 
-            var memoryStore = await SqliteMemoryStore.ConnectAsync("memory.db");
+            return new SemanticTextMemory(MongoDBMemoryStore.Connect(connectionString: "", database: "vector-cluster"), embeddingGenerator);
+        }
 
+        private static IKernel CreateKernel()
+        {
             var kernel = Kernel.Builder
-                    .WithAzureTextCompletionService(
-                        deploymentName: "text-davinci-003",
-                        endpoint: "https://weu-jarvis-ai.openai.azure.com/",
-                        credentials: azureIdentity)
+                    .WithAzureChatCompletionService(
+                        deploymentName: "gpt-35-turbo",
+                        endpoint: "https://copichat-yuwt7vgwiz3ug.openai.azure.com/",
+                       apiKey: "")
                     .WithAzureTextEmbeddingGenerationService(
                         deploymentName: "text-embedding-ada-002",
-                        endpoint: "https://weu-jarvis-ai.openai.azure.com/",
-                        credential: azureIdentity)
-                .WithMemoryStorage(memoryStore)
+                        endpoint: "https://copichat-yuwt7vgwiz3ug.openai.azure.com/",
+                       apiKey: "")
             .Build();
 
-            kernel.ImportSemanticSkillFromDirectory(Path.Combine(FileSystem.Current.AppDataDirectory, "SKPrompts"), "Encoder");
-            kernel.ImportSemanticSkillFromDirectory(Path.Combine(FileSystem.Current.AppDataDirectory, "SKPrompts"), "Resolver");
+            var memoryPlugin = new TextMemoryPlugin(CreateSemantiMemory());
 
-            kernel.ImportSkill(new TextMemorySkill(), "TextMemory");
+            kernel.ImportSemanticFunctionsFromDirectory(Path.Combine(FileSystem.Current.AppDataDirectory, "SKPrompts"), "Encoder");
+            kernel.ImportSemanticFunctionsFromDirectory(Path.Combine(FileSystem.Current.AppDataDirectory, "SKPrompts"), "Resolver");
+
+            kernel.ImportFunctions(memoryPlugin);
 
             return kernel;
         }
