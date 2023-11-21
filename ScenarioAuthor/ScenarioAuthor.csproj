@@ -63,7 +63,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.9.0" />
-    <PackageReference Include="Microsoft.SemanticKernel" Version="0.15.230609.2-preview" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.0.0-beta1" />
   </ItemGroup>
 
 </Project>

@@ -2,16 +2,43 @@
 
 <h1>Technomage Copilot !</h1>
 
+<InputSelect @bind-Value="_language" >
+    @foreach (var item in _languages)
+    {
+        <option value="@item">@item</option>
+    }
+</InputSelect>
+
 <InputTextArea DisplayName="User prompt" @bind-Value="_userPrompt"  />
 
 <br />
+
+<button @onclick="Encode">
+    Encode
+</button>
+
+<button @onclick="FindHistory">
+    Find history
+</button>
+
+<button @onclick="GroupHistory">
+    Group history
+</button>
 
 <button @onclick="FindSolution">
     Help me
 </button>
 
+<button @onclick="Clear">
+    Clear
+</button>
+
+<br />
+
 <h2>
     Solution: 
 </h2>
+
+<br />
 
 <p style="white-space: pre-wrap">@_result</p>

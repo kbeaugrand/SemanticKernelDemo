@@ -1,4 +1,4 @@
-﻿{{ textmemory.recall $INPUT }}
+﻿{{ recall $INPUT }}
 
 L'historique ci-dessus contient un ensemble de pannes ayant apparu et étant maintenant résolus. 
 Un opérateur recherche maintenant une solution pour une panne similaire. 
@@ -6,3 +6,5 @@ Un opérateur recherche maintenant une solution pour une panne similaire.
 Problème en cours: {{ $INPUT }}. 
 
 Vous êtes un assistant virtuel à qui l'opérateur demande des informations. Aidez-le à trouver ce qu'il faut faire. Donner une cause la plus probable en fonction de cet historique et proposer les actions qu'il doit réaliser pour résoudre la situation sous la forme de bullet-points.
+
+Répond en {{ $language }}

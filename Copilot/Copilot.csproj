@@ -51,24 +51,33 @@
 
     <ItemGroup>
       <Content Remove="Resources\Raw\SKPrompts\Resolver\config.json" />
+      <Content Remove="Resources\Raw\SKPrompts\Resolver\GroupHistory\config.json" />
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="Resources\Raw\SKPrompts\Resolver\GroupHistory\skprompt.txt" />
       <None Remove="Resources\Raw\SKPrompts\Resolver\skprompt.txt" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Azure.Identity" Version="1.9.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
-        <PackageReference Include="Microsoft.SemanticKernel" Version="0.15.230609.2-preview" />
-        <PackageReference Include="Microsoft.SemanticKernel.Abstractions" Version="0.15.230609.2-preview" />
-        <PackageReference Include="Microsoft.SemanticKernel.Connectors.Memory.Sqlite" Version="0.15.230609.2-preview" />
-        <PackageReference Include="Microsoft.SemanticKernel.Core" Version="0.15.230609.2-preview" />
+        <PackageReference Include="Microsoft.SemanticKernel" Version="1.0.0-beta1" />
+        <PackageReference Include="Microsoft.SemanticKernel.Abstractions" Version="1.0.0-beta1" />
+        <PackageReference Include="Microsoft.SemanticKernel.Connectors.Memory.Sqlite" Version="1.0.0-beta1" />
+        <PackageReference Include="Microsoft.SemanticKernel.Core" Version="1.0.0-beta1" />
+        <PackageReference Include="SemanticKernel.Connectors.Memory.MongoDB" Version="1.0.1-beta1" />
     </ItemGroup>
 
     <ItemGroup>
       <MauiAsset Update="Resources\Raw\SKPrompts\Encoder\AnomalyEncode\config.json">
         <CopyToOutputDirectory></CopyToOutputDirectory>
+      </MauiAsset>
+      <MauiAsset Update="Resources\Raw\SKPrompts\Resolver\GroupHistory\config.json">
+        <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+      </MauiAsset>
+      <MauiAsset Update="Resources\Raw\SKPrompts\Resolver\GroupHistory\skprompt.txt">
+        <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
       </MauiAsset>
       <MauiAsset Update="Resources\Raw\SKPrompts\Resolver\HelpMe\config.json">
         <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
