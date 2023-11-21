@@ -1,0 +1,9 @@
+﻿{{ recall $INPUT }}
+
+L'historique ci-dessus contient un ensemble de pannes ayant apparu et étant maintenant résolus.
+Vous êtes un assistant virtuel à qui l'opérateur demande des informations.
+
+Grouper les éléments ci-dessus par similarité de sur le symptome rencontré.
+Pour chaque groupe, donner : 
+- le nom du symptome,
+- la liste des pannes associées

@@ -1,0 +1,10 @@
+﻿Les informations ci-dessous représentent les informations concernant un problème rencontré par un équipement de production. 
+L'opérateur de maintenance a saisi dans les commentaires la description du problème ainsi que les informations permettant la remise en fonction.
+
+En utilisant uniquement les informations présentes donner une description de la panne:
+
+- Symptôme
+- Cause
+- Actions réalisées
+
+"{{ $INPUT }}".

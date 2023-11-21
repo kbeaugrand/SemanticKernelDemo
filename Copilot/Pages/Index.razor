@@ -2,13 +2,13 @@
 
 <h1>Technomage Copilot !</h1>
 
-<InputSelect @bind-Value="_language" >
+@* <InputSelect @bind-Value="_language" >
     @foreach (var item in _languages)
     {
         <option value="@item">@item</option>
     }
 </InputSelect>
-
+ *@
 <InputTextArea DisplayName="User prompt" @bind-Value="_userPrompt"  />
 
 <br />

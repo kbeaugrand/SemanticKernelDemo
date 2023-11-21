@@ -1,0 +1,12 @@
+﻿{
+  "schema": 1,
+  "type": "completion",
+  "description": "a function that take an input from the operator and encode that to extract the symptom, root cause and action taken to resolve the issue.",
+  "completion": {
+    "max_tokens": 300,
+    "temperature": 0,
+    "top_p": 1,
+    "presence_penalty": 0,
+    "frequency_penalty": 0
+  }
+}
